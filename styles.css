@@ -90,6 +90,7 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   width: 100%;
   max-width: 960px;
   animation: fadeIn 0.4s ease;
+  align-self: center;
 }
 .page.active { display: block; }
 
@@ -134,7 +135,7 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 .button-row {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 16px;
 }
 
@@ -403,21 +404,36 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 }
 .call-actions {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   justify-content: center;
   margin-top: 32px;
 }
 .call-btn {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
+  min-width: 130px;
+  padding: 14px 28px;
+  border-radius: 999px;
   border: none;
-  font-size: 24px;
+  font-size: 15px;
+  font-weight: 500;
   color: white;
   cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.15s ease, filter 0.15s ease;
 }
+.call-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }
+.call-btn:active { transform: translateY(0); }
 .call-btn-accept { background: var(--success); }
 .call-btn-decline { background: var(--danger); }
+.call-btn::before {
+  font-size: 16px;
+  line-height: 1;
+}
+.call-btn-accept::before { content: "✔"; }
+.call-btn-decline::before { content: "✕"; }
 
 /* Active call */
 .active-call {
@@ -515,7 +531,7 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 /* Modal overlay */
 .modal-overlay {
   background: rgba(15,23,42,0.7);
-  padding: 32px 24px;
+  padding: 40px 60px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -524,21 +540,26 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   background: white;
   color: var(--text);
   border-radius: var(--radius);
-  max-width: 480px;
+  max-width: 720px;
   width: 100%;
   overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  margin: 0 auto;
 }
 .modal-header {
   background: #FCEBEB;
-  padding: 16px 20px;
+  padding: 18px 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border-bottom: 1px solid #F7C1C1;
 }
-.modal-icon { font-size: 28px; color: #A32D2D; }
-.modal-body { padding: 20px; }
-.modal-body > * + * { margin-top: 12px; }
+.modal-icon { font-size: 28px; color: #A32D2D; flex-shrink: 0; }
+.modal-header h3 { font-size: 17px; margin: 0; }
+.modal-header .muted { font-size: 13px; margin-top: 2px; }
+.modal-body { padding: 24px; font-size: 14px; line-height: 1.55; }
+.modal-body > * + * { margin-top: 14px; }
+.modal-body > p:first-child { font-size: 14px; color: var(--text-muted); }
 .question-list {
   list-style: none;
   margin: 8px 0;
@@ -549,8 +570,26 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   border-radius: var(--radius-sm);
   font-size: 13px;
   margin-bottom: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
 }
-.question-list li::before { content: "❓ "; opacity: 0.5; }
+.question-list li::before {
+  content: "?";
+  background: var(--brand);
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
 
 /* ============================================================
    8. MOBILE / PHONE SCREENS
