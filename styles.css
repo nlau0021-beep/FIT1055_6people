@@ -605,35 +605,53 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 .next-btn { margin-top: 0; }
 
 .phone-frame {
-  width: 340px;
+  width: 400px;
   background: #0F172A;
-  border-radius: 36px;
+  border-radius: 40px;
   padding: 14px;
 }
 .phone-screen {
   background: white;
-  border-radius: 24px;
+  border-radius: 28px;
   overflow: hidden;
+  min-height: 720px;
+  display: flex;
+  flex-direction: column;
 }
 .phone-header {
   background: var(--brand);
   color: white;
-  padding: 16px;
+  padding: 18px 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 .phone-header-warn {
   background: #FCEBEB;
   color: #501313;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  text-align: center;
+  padding: 20px;
+}
+.phone-app-name { font-size: 15px; font-weight: 500; }
+.phone-app-sub { font-size: 12px; opacity: 0.8; }
+.phone-body {
+  padding: 22px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.phone-body > * + * { margin-top: 14px; }
+.phone-body.phone-body-center {
+  justify-content: center;
+  align-items: center;
   text-align: center;
 }
-.phone-app-name { font-size: 14px; font-weight: 500; }
-.phone-app-sub { font-size: 11px; opacity: 0.8; }
-.phone-body { padding: 20px 18px; }
-.phone-body > * + * { margin-top: 14px; }
+.phone-body.phone-body-center > * + * { margin-top: 16px; }
+.phone-body.phone-body-compact { padding: 16px 18px; }
+.phone-body.phone-body-compact > * + * { margin-top: 10px; }
 
 .alert-banner {
   background: #FCEBEB;
@@ -729,8 +747,14 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 .caller-claim {
   text-align: center;
   background: var(--bg);
-  padding: 18px;
+  padding: 14px;
   border-radius: var(--radius-sm);
+}
+.caller-claim .caller-avatar-medium {
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+  margin: 0 auto 8px;
 }
 .claim-label { font-size: 13px; font-weight: 500; }
 .claim-name { font-size: 16px; color: var(--brand); font-weight: 500; margin-top: 4px; }
@@ -738,17 +762,17 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
 .scam-signs {
   background: #FAEEDA;
   color: #854F0B;
-  padding: 14px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
 }
-.signs-title { font-size: 13px; font-weight: 500; color: #633806; margin-bottom: 6px; }
+.signs-title { font-size: 13px; font-weight: 500; color: #633806; margin-bottom: 4px; }
 .scam-signs ul { padding-left: 20px; font-size: 13px; }
-.scam-signs li { margin-bottom: 3px; }
+.scam-signs li { margin-bottom: 2px; }
 
 .guidance-card {
   background: #E1F5EE;
   color: #0F6E56;
-  padding: 14px;
+  padding: 12px 14px;
   border-radius: var(--radius-sm);
   font-size: 13px;
 }
@@ -758,8 +782,8 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   background: var(--danger);
   color: white;
   border: none;
-  padding: 16px;
-  font-size: 17px;
+  padding: 14px;
+  font-size: 16px;
   font-weight: 600;
   border-radius: var(--radius-sm);
   width: 100%;
@@ -770,12 +794,12 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   background: transparent;
   color: var(--text-muted);
   border: none;
-  padding: 12px;
-  font-size: 13px;
+  padding: 8px;
+  font-size: 12px;
   width: 100%;
   cursor: pointer;
   font-family: inherit;
-  margin-top: 8px !important;
+  margin-top: 4px !important;
 }
 .free-tier-badge {
   display: flex;
@@ -783,8 +807,8 @@ h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
   align-items: center;
   justify-content: center;
   border-top: 1px solid var(--border);
-  padding-top: 12px;
-  margin-top: 14px !important;
+  padding-top: 10px;
+  margin-top: 10px !important;
   font-size: 11px;
   color: var(--text-muted);
 }
