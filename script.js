@@ -10,14 +10,17 @@
 // ============================================================
 // CONFIG
 // ============================================================
-const TOTAL_PAGES = 14;
-const AMBER_THRESHOLD = 2;   // urgency keywords needed to flag amber
-const RED_THRESHOLD = 4;     // additional severity to flag red
+const TOTAL_PAGES = 14;          // main demo flow length (1..14)
+const MAX_PAGE_ID = 18;          // including alternative-path branches
+const AMBER_THRESHOLD = 2;       // urgency keywords needed to flag amber
+const RED_THRESHOLD = 4;         // additional severity to flag red
 
 let currentPage = 1;
+let previousPage = null;
 let callTimerInterval = null;
 let callSeconds = 0;
 let riskSequenceTimers = [];
+let approveAutoAdvanceTimer = null;
 
 // ============================================================
 // PAGE NAVIGATION
@@ -26,6 +29,10 @@ function goToPage(pageNum) {
   // Clean up any running animations from previous page
   clearRiskSequence();
   stopCallTimer();
+  if (approveAutoAdvanceTimer) { clearTimeout(approveAutoAdvanceTimer); approveAutoAdvanceTimer = null; }
+
+  // Track where we came from (used by alternative-path dashboard rendering)
+  previousPage = currentPage;
 
   // Hide all pages, show target page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -39,37 +46,89 @@ function goToPage(pageNum) {
 }
 
 function nextPage() {
-  if (currentPage < TOTAL_PAGES) goToPage(currentPage + 1);
+  // Smart "next" handling:
+  // - Main flow (1..14): step linearly through the demo
+  // - Alternative-path pages (15, 16, 17): each has its own outbound route
+  //   already wired in the HTML, but if the user hits Next from an alt page,
+  //   route them back into a sensible place in the main flow.
+  if (currentPage >= 1 && currentPage < TOTAL_PAGES) {
+    goToPage(currentPage + 1);
+  } else if (currentPage === 15) {
+    // False-positive branch → jump to dashboard
+    goToPage(12);
+  } else if (currentPage === 16) {
+    // Approve-mobile branch → desktop confirmation
+    goToPage(17);
+  } else if (currentPage === 17) {
+    // Desktop approved → dashboard
+    goToPage(12);
+  } else if (currentPage === 18) {
+    // Declined branch → dashboard
+    goToPage(12);
+  }
 }
 
 function prevPage() {
-  if (currentPage > 1) goToPage(currentPage - 1);
+  if (currentPage > 1 && currentPage <= TOTAL_PAGES) {
+    goToPage(currentPage - 1);
+  } else if (currentPage === 15) {
+    goToPage(7);   // back to high-risk modal
+  } else if (currentPage === 16) {
+    goToPage(9);   // back to mobile approval prompt
+  } else if (currentPage === 17) {
+    goToPage(16);  // back to mobile approve success
+  } else if (currentPage === 18) {
+    goToPage(5);   // back to incoming call
+  }
 }
 
 function updateIndicator() {
   const indicator = document.getElementById('pageIndicator');
-  if (indicator) indicator.textContent = `Page ${currentPage} / ${TOTAL_PAGES}`;
+  if (!indicator) return;
+  // For alternative branches, show their actual ID instead of pretending
+  // they're part of the main 14-page count.
+  if (currentPage > TOTAL_PAGES) {
+    indicator.textContent = `Alt path ${currentPage} / ${MAX_PAGE_ID}`;
+  } else {
+    indicator.textContent = `Page ${currentPage} / ${TOTAL_PAGES}`;
+  }
 }
 
 // Page-specific entry hooks
 function onPageEnter(pageNum) {
   switch (pageNum) {
     case 4:
-      // Enrollment complete — show today's date
       setEnrollDate();
       break;
     case 6:
-      // Start the active call animation when we hit page 6
+      // Start the active call animation
       startCallTimer();
       runRiskSequence();
       break;
     case 11:
-      // Blocked transaction confirmation — show current time
       setBlockedTime();
       break;
     case 12:
-      // Dashboard — show current week range
       setDashboardWeek();
+      updateLatestIncident();
+      break;
+    case 15:
+      // False-positive branch — log timestamp
+      setFalsePositiveTime();
+      break;
+    case 16:
+      // Approve-mobile branch — auto-advance to desktop confirmation
+      // after 2.5s so the audience sees the success state, then the
+      // bigger desktop confirmation arrives without a manual click.
+      approveAutoAdvanceTimer = setTimeout(() => {
+        goToPage(17);
+      }, 2500);
+      break;
+    case 17:
+      setApprovedTime();
+      break;
+    case 18:
+      setDeclinedTime();
       break;
   }
 }
@@ -84,25 +143,38 @@ function onPageEnter(pageNum) {
 function setEnrollDate() {
   const el = document.getElementById('enrollDate');
   if (!el) return;
-  const now = new Date();
-  el.textContent = formatDate(now);
+  el.textContent = formatDate(new Date());
 }
 
 function setBlockedTime() {
   const el = document.getElementById('blockedTime');
   if (!el) return;
-  const now = new Date();
-  const hh = String(now.getHours()).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  el.textContent = `${formatDate(now)}, ${hh}:${mm}`;
+  el.textContent = formatDateTime(new Date());
+}
+
+function setFalsePositiveTime() {
+  const el = document.getElementById('falsePositiveTime');
+  if (!el) return;
+  el.textContent = formatDateTime(new Date());
+}
+
+function setApprovedTime() {
+  const el = document.getElementById('approvedTime');
+  if (!el) return;
+  el.textContent = formatDateTime(new Date());
+}
+
+function setDeclinedTime() {
+  const el = document.getElementById('declinedTime');
+  if (!el) return;
+  el.textContent = formatDateTime(new Date());
 }
 
 function setDashboardWeek() {
   const el = document.getElementById('dashboardWeek');
   if (!el) return;
-  // Show "Week of <Mon>–<Sun> <Month> <Year>"
   const today = new Date();
-  const day = today.getDay();           // 0 = Sun, 1 = Mon ...
+  const day = today.getDay();
   const offsetToMon = day === 0 ? -6 : 1 - day;
   const monday = new Date(today);
   monday.setDate(today.getDate() + offsetToMon);
@@ -115,6 +187,60 @@ function setDashboardWeek() {
 function formatDate(d) {
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function formatDateTime(d) {
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${formatDate(d)}, ${hh}:${mm}`;
+}
+
+// ============================================================
+// LATEST INCIDENT — adapts to which path the user just walked
+// ============================================================
+// When the user reaches the dashboard, highlight the most recent
+// event according to where they came from:
+//   - From page 11 (blocked):       High risk, Blocked
+//   - From page 15 (false positive): Elevated risk, Reviewed
+//   - From page 17 (approved):       High risk, Approved
+//   - Anywhere else (e.g. direct):   default to Blocked
+//
+// Only the highlighted row changes. The four older rows stay
+// fixed so the dashboard looks like an established system.
+// ============================================================
+function updateLatestIncident() {
+  const timeEl    = document.getElementById('latestIncidentTime');
+  const outcomeEl = document.getElementById('latestIncidentOutcome');
+  const rowEl     = document.getElementById('latestIncidentRow');
+  if (!timeEl || !outcomeEl || !rowEl) return;
+
+  let outcome = 'Blocked — denied by device';
+  let riskHTML = '<span class="risk-pill risk-pill-red">High</span>';
+  let theoryHTML = '<span class="theory-pill theory-deon">Deontological</span>';
+
+  if (previousPage === 15) {
+    outcome = 'Reviewed — marked false positive';
+    riskHTML = '<span class="risk-pill risk-pill-amber">Elevated</span>';
+    theoryHTML = '<span class="theory-pill theory-virt">Virtue · Justice</span>';
+  } else if (previousPage === 17) {
+    outcome = 'Approved — passkey verified';
+    riskHTML = '<span class="risk-pill risk-pill-red">High</span>';
+    theoryHTML = '<span class="theory-pill theory-util">Utilitarian</span>';
+  } else if (previousPage === 18) {
+    outcome = 'Declined — user-initiated, no data processed';
+    riskHTML = '<span class="risk-pill risk-pill-green">N/A</span>';
+    theoryHTML = '<span class="theory-pill theory-deon">Deontological · Autonomy</span>';
+  }
+
+  timeEl.textContent = 'just now';
+  outcomeEl.textContent = outcome;
+
+  // Direct children of the row: time, recipient, risk-wrapper, outcome, theory-wrapper
+  const directCells = Array.from(rowEl.children).filter(el => el.tagName === 'SPAN');
+  if (directCells.length >= 5) {
+    directCells[2].innerHTML = riskHTML;
+    directCells[4].innerHTML = theoryHTML;
+  }
 }
 
 // ============================================================

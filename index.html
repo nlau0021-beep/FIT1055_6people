@@ -152,7 +152,7 @@
         <span class="verified-badge">✓ Verified Corporate Call</span>
         <div class="call-actions">
           <button class="call-btn call-btn-accept" onclick="nextPage()">Accept</button>
-          <button class="call-btn call-btn-decline">Decline</button>
+          <button class="call-btn call-btn-decline" onclick="goToPage(18)">Decline</button>
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@
               </div>
             </div>
             <div class="button-row">
-                <button class="secondary-btn">Mark as false positive</button>
+                <button class="secondary-btn" onclick="goToPage(15)">Mark as false positive</button>
                 <button class="primary-btn" onclick="nextPage()">Initiate out-of-band approval</button>
             </div>
         </div></div>
@@ -307,7 +307,7 @@
             <p><strong>Passkey protected.</strong> Authenticate with Face ID.</p>
           </div>
           <div class="phone-actions">
-            <button class="phone-btn-approve">Approve</button>
+            <button class="phone-btn-approve" onclick="goToPage(16)">Approve</button>
             <button class="phone-btn-deny" onclick="nextPage()">Deny</button>
           </div>
         </div>
@@ -416,6 +416,49 @@
           <p class="chart-note">Mandarin false-positive rate exceeds fairness threshold. Review recommended.</p>
         </div>
 
+        <div class="chart-card">
+          <div class="chart-header">
+            <p class="chart-title">Recent incidents</p>
+            <span class="muted" style="font-size: 11px;">Last 5 events · encrypted metadata only</span>
+          </div>
+          <div class="incidents-table">
+            <div class="incidents-row incidents-header-row">
+              <span>Time</span><span>Recipient</span><span>Risk</span><span>Outcome</span><span>Theory applied</span>
+            </div>
+            <div class="incidents-row incidents-row-highlight" id="latestIncidentRow">
+              <span id="latestIncidentTime">just now</span>
+              <span>hash:4a7b…</span>
+              <span><span class="risk-pill risk-pill-red">High</span></span>
+              <span id="latestIncidentOutcome">Blocked — denied by device</span>
+              <span><span class="theory-pill theory-deon">Deontological</span></span>
+            </div>
+            <div class="incidents-row">
+              <span>2 hr ago</span><span>hash:c2e1…</span>
+              <span><span class="risk-pill risk-pill-amber">Elevated</span></span>
+              <span>Approved — passkey verified</span>
+              <span><span class="theory-pill theory-util">Utilitarian</span></span>
+            </div>
+            <div class="incidents-row">
+              <span>5 hr ago</span><span>hash:9f8d…</span>
+              <span><span class="risk-pill risk-pill-green">Low</span></span>
+              <span>No action required</span>
+              <span><span class="theory-pill theory-virt">Virtue</span></span>
+            </div>
+            <div class="incidents-row">
+              <span>Yesterday</span><span>hash:3b21…</span>
+              <span><span class="risk-pill risk-pill-red">High</span></span>
+              <span>Blocked — denied by device</span>
+              <span><span class="theory-pill theory-deon">Deontological</span></span>
+            </div>
+            <div class="incidents-row">
+              <span>Yesterday</span><span>hash:e7a4…</span>
+              <span><span class="risk-pill risk-pill-amber">Elevated</span></span>
+              <span>Approved — passkey verified</span>
+              <span><span class="theory-pill theory-util">Utilitarian</span></span>
+            </div>
+          </div>
+        </div>
+
         <div class="ethical-badge ethical-badge-privacy">
           <span class="badge-icon">🔒</span>
           <div>
@@ -487,6 +530,158 @@
       </div>
       <p class="cover-subtitle">Thank you · Questions?</p>
       <button class="primary-btn" onclick="goToPage(1)">Restart demo</button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 15 — ALTERNATIVE PATH: FALSE POSITIVE LOGGED
+       Owner: Member 3 / Member 5
+       Reached from Page 7 when user clicks "Mark as false positive"
+       Path: shows confirmation, then routes to dashboard (Page 12)
+            with false-positive event highlighted
+  ============================================================ -->
+  <section id="page-15" class="page">
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header-left">
+          <span class="app-icon">🛡️</span>
+          <span class="app-title">6P Veri Shield</span>
+        </div>
+        <span class="app-header-right">Alternative path · False positive logged</span>
+      </header>
+      <main class="app-body text-center">
+        <div class="info-icon">ℹ️</div>
+        <h2>Flagged as false positive</h2>
+        <p>The call has been resumed. Your feedback helps us improve.</p>
+        <div class="info-card">
+          <p><strong>Action logged:</strong> false-positive feedback recorded</p>
+          <p><strong>Time:</strong> <span id="falsePositiveTime">—</span></p>
+          <p><strong>Effect:</strong> system retrains on this signal pattern</p>
+          <p><strong>Privacy:</strong> only the risk-signal metadata is retained</p>
+        </div>
+
+        <div class="ethical-badge ethical-badge-privacy">
+          <span class="badge-icon">👥</span>
+          <div>
+            <p class="badge-title">Human-in-the-loop · ACM 1.4 (Fair) · 2.5 (Comprehensive evaluation)</p>
+            <p class="badge-body">The system supports human judgment rather than overriding it. False-positive feedback is a first-class signal — it tunes our fairness metrics so accent and language bias gets caught and corrected, not hidden.</p>
+          </div>
+        </div>
+
+        <p class="muted">The audit dashboard now reflects this event.</p>
+        <button class="primary-btn" onclick="goToPage(12)">View on dashboard →</button>
+      </main>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 16 — ALTERNATIVE PATH: APPROVE SUCCESS (MOBILE → DESKTOP)
+       Owner: Member 4
+       Reached from Page 9 when CEO taps "Approve" with passkey
+       Path: brief mobile success → auto-advance to desktop confirmation
+  ============================================================ -->
+  <section id="page-16" class="page mobile-scene">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <header class="phone-header">
+          <span class="app-icon">🛡️</span>
+          <div>
+            <p class="phone-app-name">6P Veri Shield</p>
+            <p class="phone-app-sub">Approval confirmed</p>
+          </div>
+        </header>
+        <div class="phone-body phone-body-center">
+          <div class="success-icon">✓</div>
+          <h2>Approved</h2>
+          <p>Authenticated with passkey.</p>
+          <p class="muted">Transfer will proceed automatically.</p>
+          <div class="approve-status">
+            <span class="dot-pulse"></span>
+            <span>Returning to desktop...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 17 — ALTERNATIVE PATH: TRANSFER APPROVED (DESKTOP)
+       Owner: Member 4
+       Auto-advanced from Page 16. Mirrors Page 11 (blocked) but
+       shows the success path so audience sees the system isn't paranoid.
+  ============================================================ -->
+  <section id="page-17" class="page">
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header-left">
+          <span class="app-icon">🛡️</span>
+          <span class="app-title">6P Veri Shield</span>
+        </div>
+        <span class="app-header-right">Alternative path · Call authorised</span>
+      </header>
+      <main class="app-body text-center">
+        <div class="success-icon">✓</div>
+        <h2>Transfer approved</h2>
+        <p>Request was authorised by the executive via registered device.</p>
+        <div class="info-card">
+          <p><strong>Time:</strong> <span id="approvedTime">—</span></p>
+          <p><strong>Risk level:</strong> High — verification completed</p>
+          <p><strong>Outcome:</strong> Approved — passkey on registered device</p>
+          <p><strong>Ethical principle applied:</strong> ACM 1.2 (harm avoided) + 2.5 (independent verification)</p>
+        </div>
+
+        <div class="ethical-badge ethical-badge-honesty">
+          <span class="badge-icon">⚖️</span>
+          <div>
+            <p class="badge-title">The system is not paranoid</p>
+            <p class="badge-body">Legitimate calls go through. Verification adds ~30 seconds — a tiny tax compared to preventing a single fraud. Honest uncertainty + out-of-band proof = trust without false confidence.</p>
+          </div>
+        </div>
+
+        <button class="primary-btn" onclick="goToPage(12)">View in audit log →</button>
+      </main>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAGE 18 — ALTERNATIVE PATH: CALL DECLINED
+       Owner: Member 3
+       Reached from Page 5 when user clicks "Decline" on incoming call
+       Path: cautious-user decline → log as user-initiated outcome
+            → route to dashboard with declined event highlighted
+  ============================================================ -->
+  <section id="page-18" class="page">
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header-left">
+          <span class="app-icon">🛡️</span>
+          <span class="app-title">6P Veri Shield</span>
+        </div>
+        <span class="app-header-right">Alternative path · Call declined</span>
+      </header>
+      <main class="app-body text-center">
+        <div class="decline-icon">📵</div>
+        <h2>Call declined</h2>
+        <p>The call ended before any analysis began.</p>
+
+        <div class="info-card">
+          <p><strong>Time:</strong> <span id="declinedTime">—</span></p>
+          <p><strong>Caller:</strong> "Benedetto Vigna" — unverified at decline</p>
+          <p><strong>Data processed:</strong> none — no voice sample, no transcript</p>
+          <p><strong>Outcome:</strong> user-initiated decline</p>
+        </div>
+
+        <div class="ethical-badge ethical-badge-honesty">
+          <span class="badge-icon">🙋</span>
+          <div>
+            <p class="badge-title">User autonomy · ACM 1.4 (Fair) · 1.5 (Respect intellectual property &amp; privacy)</p>
+            <p class="badge-body">Sometimes the safest action is simply not to engage. The system honors that instinct without processing data the user never agreed to share. Declining is a first-class outcome, not a failure mode.</p>
+          </div>
+        </div>
+
+        <p class="muted">The event is logged on the dashboard as a user-initiated outcome.</p>
+        <button class="primary-btn" onclick="goToPage(12)">View on dashboard →</button>
+      </main>
     </div>
   </section>
 
