@@ -127,7 +127,7 @@
         <p class="muted">Your protected biometric template is now active.</p>
         <div class="info-card">
           <p><strong>Template ID:</strong> VS-2026-7891</p>
-          <p><strong>Last updated:</strong> 14 May 2026</p>
+          <p><strong>Last updated:</strong> <span id="enrollDate">—</span></p>
           <p><strong>Status:</strong> <span class="status-active">● Active</span></p>
         </div>
         <button class="primary-btn" onclick="nextPage()">Continue to Demo Scenario →</button>
@@ -329,7 +329,7 @@
             <p class="phone-app-sub">Denial confirmed</p>
           </div>
         </header>
-        <div class="phone-body phone-body-center">
+        <div class="phone-body text-center">
           <div class="deny-icon">✕</div>
           <h2>Request denied</h2>
           <p>Security team has been notified.</p>
@@ -358,7 +358,7 @@
         <h2>Transaction blocked</h2>
         <p>Request was not authorised by the executive.</p>
         <div class="info-card">
-          <p><strong>Time:</strong> 14 May 2026, 14:32 GMT</p>
+          <p><strong>Time:</strong> <span id="blockedTime">—</span></p>
           <p><strong>Risk level:</strong> <span class="risk-text-red">High</span></p>
           <p><strong>Outcome:</strong> Blocked — denied by registered device</p>
           <p><strong>Ethical principle applied:</strong> ACM 1.2 — Avoid Harm</p>
@@ -379,7 +379,7 @@
           <span class="app-icon">📊</span>
           <span class="app-title">Security Dashboard</span>
         </div>
-        <span class="app-header-right">Week of 11–17 May 2026</span>
+        <span class="app-header-right" id="dashboardWeek">This week</span>
       </header>
       <main class="app-body">
         <div class="kpi-grid">
@@ -440,7 +440,7 @@
           <span style="font-size: 28px;">⚠</span>
           <p class="phone-app-name">Possible scam detected</p>
         </header>
-        <div class="phone-body phone-body-compact">
+        <div class="phone-body">
           <div class="caller-claim">
             <div class="caller-avatar-medium">?</div>
             <p class="claim-label">Caller claims to be:</p>

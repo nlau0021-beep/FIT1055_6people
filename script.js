@@ -54,12 +54,67 @@ function updateIndicator() {
 // Page-specific entry hooks
 function onPageEnter(pageNum) {
   switch (pageNum) {
+    case 4:
+      // Enrollment complete — show today's date
+      setEnrollDate();
+      break;
     case 6:
       // Start the active call animation when we hit page 6
       startCallTimer();
       runRiskSequence();
       break;
+    case 11:
+      // Blocked transaction confirmation — show current time
+      setBlockedTime();
+      break;
+    case 12:
+      // Dashboard — show current week range
+      setDashboardWeek();
+      break;
   }
+}
+
+// ============================================================
+// DATE / TIME FORMATTERS
+// ============================================================
+// These keep the prototype feeling live — dates update whenever
+// the demo is shown rather than being frozen at build time.
+// ============================================================
+
+function setEnrollDate() {
+  const el = document.getElementById('enrollDate');
+  if (!el) return;
+  const now = new Date();
+  el.textContent = formatDate(now);
+}
+
+function setBlockedTime() {
+  const el = document.getElementById('blockedTime');
+  if (!el) return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  el.textContent = `${formatDate(now)}, ${hh}:${mm}`;
+}
+
+function setDashboardWeek() {
+  const el = document.getElementById('dashboardWeek');
+  if (!el) return;
+  // Show "Week of <Mon>–<Sun> <Month> <Year>"
+  const today = new Date();
+  const day = today.getDay();           // 0 = Sun, 1 = Mon ...
+  const offsetToMon = day === 0 ? -6 : 1 - day;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + offsetToMon);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const monthName = sunday.toLocaleString('en-US', { month: 'long' });
+  el.textContent = `Week of ${monday.getDate()}–${sunday.getDate()} ${monthName} ${sunday.getFullYear()}`;
+}
+
+function formatDate(d) {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 // ============================================================
